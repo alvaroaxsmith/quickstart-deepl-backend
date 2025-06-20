@@ -23,16 +23,7 @@ export const handleTranslationRequest = async (
       targetLang as TargetLanguageCode
     );
 
-    const translationRepository = AppDataSource.getRepository(Translation);
-    const newTranslation = translationRepository.create({
-      original_text: text,
-      translated_text: translatedText,
-      source_language: "auto", // O DeepL pode detectar o idioma de origem
-      target_language: targetLang,
-      // user_id será adicionado posteriormente com a autenticação
-    });
-    await translationRepository.save(newTranslation);
-
+    // A lógica de salvar foi movida para o translationService para implementar o cache
     res.json({ translation: translatedText });
   } catch (error) {
     if (error instanceof Error) {
