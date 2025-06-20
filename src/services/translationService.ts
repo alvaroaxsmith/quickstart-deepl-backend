@@ -14,7 +14,8 @@ const translator = new deepl.Translator(authKey);
 
 export const translateText = async (
   text: string,
-  targetLang: deepl.TargetLanguageCode
+  targetLang: deepl.TargetLanguageCode,
+  userId?: number
 ) => {
   const translationRepository = AppDataSource.getRepository(Translation);
   try {
@@ -42,7 +43,7 @@ export const translateText = async (
       translated_text: translatedText,
       source_language: result.detectedSourceLang || "auto",
       target_language: targetLang,
-      // user_id será adicionado posteriormente com a autenticação
+      user_id: userId,
     });
     await translationRepository.save(newTranslation);
 
