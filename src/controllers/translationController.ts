@@ -9,6 +9,7 @@ export const handleTranslationRequest = async (
   res: Response
 ): Promise<void> => {
   const { text, targetLang } = req.body;
+  const userId = req.userId;
 
   if (!text || !targetLang) {
     res
@@ -20,10 +21,10 @@ export const handleTranslationRequest = async (
   try {
     const translatedText = await translateText(
       text,
-      targetLang as TargetLanguageCode
+      targetLang as TargetLanguageCode,
+      userId
     );
 
-    // A lógica de salvar foi movida para o translationService para implementar o cache
     res.json({ translation: translatedText });
   } catch (error) {
     if (error instanceof Error) {
@@ -38,9 +39,12 @@ export const getTranslationHistory = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const userId = req.userId;
   try {
     const translationRepository = AppDataSource.getRepository(Translation);
-    const translations = await translationRepository.find();
+    const translations = await translationRepository.find({
+      where: { user_id: userId },
+    });
     res.json({ history: translations });
   } catch (error) {
     console.error("Error fetching translation history:", error);
@@ -53,14 +57,18 @@ export const getTranslationById = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
+  const userId = req.userId;
   try {
     const translationRepository = AppDataSource.getRepository(Translation);
     const translation = await translationRepository.findOneBy({
       id: parseInt(id, 10),
+      user_id: userId,
     });
 
     if (!translation) {
-      res.status(404).json({ error: "Translation not found." });
+      res
+        .status(404)
+        .json({ error: "Translation not found or access denied." });
       return;
     }
 

@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import translationRoutes from "./routes/translationRoutes";
+import authRoutes from "./routes/authRoutes";
 import { AppDataSource } from "./config/database";
 
 dotenv.config();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api", translationRoutes);
+app.use("/api/auth", authRoutes);
 
 AppDataSource.initialize()
   .then(() => {
