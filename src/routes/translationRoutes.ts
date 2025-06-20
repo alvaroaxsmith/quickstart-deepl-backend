@@ -3,6 +3,7 @@ import {
   handleTranslationRequest,
   getTranslationHistory,
   getTranslationById,
+  getLanguages,
 } from "../controllers/translationController";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { rateLimitMiddleware } from "../middleware/rateLimitMiddleware";
@@ -17,5 +18,6 @@ router.post(
 );
 router.get("/translations", authMiddleware, getTranslationHistory);
 router.get("/translations/:id", authMiddleware, getTranslationById);
+router.get("/languages", getLanguages);
 
 export default router;

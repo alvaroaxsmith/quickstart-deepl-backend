@@ -3,6 +3,10 @@ import { translateText } from "../services/translationService";
 import { TargetLanguageCode } from "deepl-node";
 import { AppDataSource } from "../config/database";
 import { Translation } from "../entity/Translation";
+import { SupportedLanguage } from "../entity/SupportedLanguage";
+
+const supportedLanguageRepository =
+  AppDataSource.getRepository(SupportedLanguage);
 
 export const handleTranslationRequest = async (
   req: Request,
@@ -19,6 +23,19 @@ export const handleTranslationRequest = async (
   }
 
   try {
+    // Validação do idioma
+    const isTargetLangSupported =
+      (await supportedLanguageRepository.count({
+        where: { language_code: targetLang },
+      })) > 0;
+
+    if (!isTargetLangSupported) {
+      res
+        .status(400)
+        .json({ error: `Target language '${targetLang}' is not supported.` });
+      return;
+    }
+
     const translatedText = await translateText(
       text,
       targetLang as TargetLanguageCode,
@@ -76,5 +93,22 @@ export const getTranslationById = async (
   } catch (error) {
     console.error(`Error fetching translation with ID ${id}:`, error);
     res.status(500).json({ error: "Failed to fetch translation." });
+  }
+};
+
+export const getLanguages = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const languages = await supportedLanguageRepository.find({
+      order: {
+        language_name: "ASC",
+      },
+    });
+    res.json({ languages });
+  } catch (error) {
+    console.error("Error fetching supported languages:", error);
+    res.status(500).json({ error: "Failed to fetch supported languages." });
   }
 };
