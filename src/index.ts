@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import translationRoutes from "./routes/translationRoutes";
+import { AppDataSource } from "./config/database";
 
 dotenv.config();
 
@@ -13,6 +14,11 @@ app.use(express.json());
 
 app.use("/api", translationRoutes);
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Database connected successfully with TypeORM!");
+    app.listen(port, () => {
+      console.log(`[server]: Server is running at http://localhost:${port}`);
+    });
+  })
+  .catch((error) => console.error("Error connecting to database:", error));
