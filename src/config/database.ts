@@ -1,16 +1,20 @@
-import mysql from "mysql2";
+import "reflect-metadata";
+import { DataSource } from "typeorm";
 import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config();
 
-const pool = mysql.createPool({
+export const AppDataSource = new DataSource({
+  type: "mysql",
   host: process.env.DB_HOST,
-  user: process.env.DB_USER,
+  port: 3306,
+  username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+  synchronize: false,
+  logging: false,
+  entities: [path.join(__dirname, "../entity/**/*.js")],
+  migrations: [path.join(__dirname, "../migration/**/*.js")],
+  subscribers: [],
 });
-
-export default pool.promise();
