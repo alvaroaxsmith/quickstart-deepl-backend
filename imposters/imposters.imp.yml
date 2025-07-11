@@ -1,0 +1,137 @@
+- name: "DeepL Backend Mock - Register User"
+  request:
+    endpoint: "/api/auth/register"
+    method: "POST"
+  response:
+    status: 201
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "message": "User registered successfully."
+      }
+- name: "Login - Success"
+  request:
+    endpoint: "/api/auth/login"
+    method: "POST"
+    body: '{"username":"testuser","password":"password123"}'
+  response:
+    status: 200
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "message": "Login successful.",
+        "token": "fake-jwt-token"
+      }
+- name: "Login - Invalid Credentials"
+  request:
+    endpoint: "/api/auth/login"
+    method: "POST"
+  response:
+    status: 401
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "error": "Invalid credentials."
+      }
+- name: "Translate Text - Authorized"
+  request:
+    endpoint: "/api/translate"
+    method: "POST"
+    headers:
+      Authorization: "Bearer fake-jwt-token"
+  response:
+    status: 200
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "translation": "This is a translated text."
+      }
+- name: "Translate Text - Unauthorized"
+  request:
+    endpoint: "/api/translate"
+    method: "POST"
+  response:
+    status: 401
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "error": "Authorization token required."
+      }
+- name: "Get Translation History"
+  request:
+    endpoint: "/api/translations"
+    method: "GET"
+    headers:
+      Authorization: "Bearer fake-jwt-token"
+  response:
+    status: 200
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "history": [
+          {
+            "id": 1,
+            "original_text": "Hello",
+            "translated_text": "Olá",
+            "source_language": "en",
+            "target_language": "pt",
+            "timestamp": "2024-07-20T12:00:00Z",
+            "user_id": 1
+          },
+          {
+            "id": 2,
+            "original_text": "How are you?",
+            "translated_text": "Como você está?",
+            "source_language": "en",
+            "target_language": "pt",
+            "timestamp": "2024-07-20T12:05:00Z",
+            "user_id": 1
+          }
+        ]
+      }
+- name: "Get Translation by ID"
+  request:
+    endpoint: "/api/translations/1"
+    method: "GET"
+    headers:
+      Authorization: "Bearer fake-jwt-token"
+  response:
+    status: 200
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "translation": {
+          "id": 1,
+          "original_text": "Hello",
+          "translated_text": "Olá",
+          "source_language": "en",
+          "target_language": "pt",
+          "timestamp": "2024-07-20T12:00:00Z",
+          "user_id": 1
+        }
+      }
+- name: "Get Languages"
+  request:
+    endpoint: "/api/languages"
+    method: "GET"
+  response:
+    status: 200
+    headers:
+      Content-Type: "application/json"
+    body: >
+      {
+        "languages": [
+          { "language_code": "de", "language_name": "German" },
+          { "language_code": "en", "language_name": "English" },
+          { "language_code": "es", "language_name": "Spanish" },
+          { "language_code": "fr", "language_name": "French" },
+          { "language_code": "pt", "language_name": "Portuguese" }
+        ]
+      }

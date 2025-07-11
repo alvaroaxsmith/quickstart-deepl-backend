@@ -43,17 +43,17 @@ export const registerUser = async (
 };
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     res
       .status(400)
-      .json({ error: "Missing required fields: username and password." });
+      .json({ error: "Missing required fields: email and password." });
     return;
   }
 
   try {
-    const user = await userRepository.findOne({ where: { username } });
+    const user = await userRepository.findOne({ where: { email } });
     if (!user) {
       res.status(401).json({ error: "Invalid credentials." });
       return;

@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
     "build": "tsc",
-    "dev": "nodemon src/index.ts",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
+    "mock": "killgrave",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typeorm": "npx typeorm",
     "db:migrate": "npm run typeorm migration:run -- -d dist/config/database.js",
@@ -35,7 +36,9 @@
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.3",
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.10",
+    "sqlite3": "^5.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
